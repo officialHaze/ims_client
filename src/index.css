@@ -1,13 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Bauhaus-extrabold";
+  src: url("../public/fonts/itc_bauhaus_extrabold.ttf");
+}
+
+@font-face {
+  font-family: "Lovelo-bold";
+  src: url("../public/fonts/lovelo_bold.otf");
+}
+
+@font-face {
+  font-family: "Garet-normal";
+  src: url("../public/fonts/garet_normal.ttf");
+}
+
+@layer components {
+  .input-box {
+    @apply w-full border-2 border-black rounded-lg py-2 px-4 text-lg;
+  }
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
