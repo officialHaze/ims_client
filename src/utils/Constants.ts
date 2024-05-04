@@ -3,6 +3,9 @@ export const ACCESS_TOKEN = "access_token";
 export const REFRESH_TOKEN = "refresh_token";
 
 // Input ids'
+export const FULL_NAME_INPUT = "FULL_NAME_INPUT";
+export const USERNAME_INPUT = "USERNAME_INPUT";
+export const EMAIL_INPUT = "EMAIL_INPUT";
 export const PHONE_INPUT = "PHONE_INPUT";
 export const PASSWORD_INPUT = "PASSWORD_INPUT";
 
