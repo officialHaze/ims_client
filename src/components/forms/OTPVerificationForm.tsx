@@ -2,12 +2,20 @@ import React, { ChangeEvent, FormEvent, useContext, useState } from "react";
 import { ERROR_TOAST, OTP_INPUT } from "../../utils/Constants";
 import VerifyButton from "../buttons/VerifyButton";
 import { ToastContext } from "../../App";
+import OTPVerificationHelper from "../../helpers/OTPVerificationHelper";
 
-interface Props extends React.HTMLProps<HTMLElement> {}
+interface Props extends React.HTMLProps<HTMLElement> {
+  isOtpVerificationNeeded: React.Dispatch<React.SetStateAction<boolean>>;
+  relogin: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 const noOfInputBoxes = [1, 2, 3, 4, 5, 6];
 
-export default function OTPVerificationForm({ className }: Props) {
+export default function OTPVerificationForm({
+  className,
+  isOtpVerificationNeeded,
+  relogin,
+}: Props) {
   const [otpDigit, setOtpDigit] = useState<any>({
     1: 0,
     2: 0,
@@ -92,7 +100,20 @@ export default function OTPVerificationForm({ className }: Props) {
       toastCtxPayload.displayToast("Please provide a valid OTP!", ERROR_TOAST);
     }
 
-    // Call the helper method to for otp verification
+    // Call the helper method for otp verification
+    OTPVerificationHelper.verify(
+      otpDigit[1],
+      otpDigit[2],
+      otpDigit[3],
+      otpDigit[4],
+      otpDigit[5],
+      otpDigit[6],
+      {
+        toastDisplayer: toastCtxPayload.displayToast,
+        isOtpVerificationNeeded: isOtpVerificationNeeded,
+        relogin: relogin,
+      }
+    );
   };
 
   return (
@@ -111,6 +132,7 @@ export default function OTPVerificationForm({ className }: Props) {
               className="input-box rounded-none border-t-0 border-l-0 border-r-0 outline-none text-center"
               value={!otpDigit[boxId] ? "" : otpDigit[boxId].toString()}
               onChange={handleChange}
+              autoComplete="off"
             />
           );
         })}

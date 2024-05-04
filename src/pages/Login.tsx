@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import LoginForm from "../components/forms/LoginForm";
 import useOTPVerification from "../custom_hooks/useOTPVerification";
 import OTPVerificationForm from "../components/forms/OTPVerificationForm";
 
 export default function Login() {
   const { otpVerificationNeeded, isOtpVerificationNeeded } = useOTPVerification();
+
+  const [relogin, toRelogin] = useState(false);
 
   return (
     <div className="flex items-center h-screen relative">
@@ -17,9 +19,12 @@ export default function Login() {
 
       <section className="login-section flex flex-col justify-center w-1/2 h-full absolute right-0">
         {!otpVerificationNeeded ? (
-          <LoginForm isOtpVerificationNeeded={isOtpVerificationNeeded} />
+          <LoginForm isOtpVerificationNeeded={isOtpVerificationNeeded} relogin={relogin} />
         ) : (
-          <OTPVerificationForm />
+          <OTPVerificationForm
+            isOtpVerificationNeeded={isOtpVerificationNeeded}
+            relogin={toRelogin}
+          />
         )}
       </section>
     </div>

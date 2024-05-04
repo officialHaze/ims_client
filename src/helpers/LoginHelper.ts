@@ -42,6 +42,9 @@ export default class LoginHelper {
       // Store the refresh token
       Token.saveRefreshToken(data.refreshToken);
 
+      //  Delete the temp cached login details
+      sessionStorage.removeItem("login-details");
+
       // Redirect to home page
       this.navigate(HOME);
     } catch (err: any) {
