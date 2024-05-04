@@ -10,6 +10,7 @@ import { ToastContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import RegisterButton from "../buttons/RegisterButton";
 import Indicator from "../Indicator";
+import RegistrationHelper from "../../helpers/RegisterHelper";
 
 interface Props extends HTMLProps<HTMLElement> {}
 
@@ -29,7 +30,6 @@ export default function RegisterForm({ className }: Props) {
     onPhone: false,
     onPassword: false,
   });
-  console.log(showErrorIndicator);
 
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
 
@@ -38,6 +38,7 @@ export default function RegisterForm({ className }: Props) {
   const toastCtxPayload = useContext(ToastContext);
   if (!toastCtxPayload) throw new Error("Toast context payload is null!");
 
+  // Show error indicators for each invalid field
   useMemo(() => {
     invalidFields.forEach(invalidField => {
       switch (invalidField) {
@@ -182,6 +183,9 @@ export default function RegisterForm({ className }: Props) {
       setInvalidFields([...invalidFields]);
       return;
     }
+
+    // Call the helper method to help with the registration
+    RegistrationHelper.register(registerDetails, toastCtxPayload.displayToast, navigate);
   };
 
   return (
