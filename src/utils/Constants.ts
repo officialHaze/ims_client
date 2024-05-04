@@ -8,6 +8,7 @@ export const USERNAME_INPUT = "USERNAME_INPUT";
 export const EMAIL_INPUT = "EMAIL_INPUT";
 export const PHONE_INPUT = "PHONE_INPUT";
 export const PASSWORD_INPUT = "PASSWORD_INPUT";
+export const OTP_INPUT = "OTP_INPUT";
 
 // Toast status
 export const ERROR_TOAST = "ERROR_TOAST";

@@ -5,9 +5,11 @@ import LoginHelper from "../../helpers/LoginHelper";
 import { ToastContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 
-interface Props extends HTMLProps<HTMLElement> {}
+interface Props extends HTMLProps<HTMLElement> {
+  isOtpVerificationNeeded: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-export default function LoginForm({ className }: Props) {
+export default function LoginForm({ className, isOtpVerificationNeeded }: Props) {
   const [loginDetails, setLoginDetails] = useState({
     phone: 0,
     password: "",
@@ -50,7 +52,8 @@ export default function LoginForm({ className }: Props) {
       loginDetails.phone,
       loginDetails.password,
       toastCtxPayload.displayToast,
-      navigate
+      navigate,
+      isOtpVerificationNeeded
     );
     await loginHelper.login();
   };

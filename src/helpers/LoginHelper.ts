@@ -12,16 +12,20 @@ export default class LoginHelper {
 
   private navigate: NavigateFunction;
 
+  private isOtpVerificationNeeded: React.Dispatch<React.SetStateAction<boolean>>;
+
   constructor(
     phone: number,
     password: string,
     toastDisplayer: (message: string, status: string) => void,
-    navigate: NavigateFunction
+    navigate: NavigateFunction,
+    isOtpVerificationNeeded: React.Dispatch<React.SetStateAction<boolean>>
   ) {
     this.phone = phone;
     this.password = password;
     this.toastDisplayer = toastDisplayer;
     this.navigate = navigate;
+    this.isOtpVerificationNeeded = isOtpVerificationNeeded;
   }
 
   public async login() {
@@ -46,6 +50,7 @@ export default class LoginHelper {
       const errStatus = err.response.status;
       if (errStatus === 403) {
         // User is not verified, handle accordingly
+        this.isOtpVerificationNeeded(true);
         return;
       }
 
