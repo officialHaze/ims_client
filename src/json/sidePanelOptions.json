@@ -1,0 +1,18 @@
+[
+    {
+        "id": "1",
+        "label": "Dashboard"
+    },
+    {
+        "id": "2",
+        "label": "Business"
+    },
+    {
+        "id": "3",
+        "label": "Categories"
+    },
+    {
+        "id": "4",
+        "label": "Listing"
+    }
+]
