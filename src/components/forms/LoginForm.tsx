@@ -1,13 +1,32 @@
-import React, { ChangeEvent, FormEvent, HTMLProps, useContext, useState } from "react";
+import React, { ChangeEvent, FormEvent, HTMLProps, useContext, useEffect, useState } from "react";
 import LoginButton from "../buttons/LoginButton";
 import { PASSWORD_INPUT, PHONE_INPUT } from "../../utils/Constants";
 import LoginHelper from "../../helpers/LoginHelper";
 import { ToastContext } from "../../App";
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
-interface Props extends HTMLProps<HTMLElement> {}
+interface Props extends HTMLProps<HTMLElement> {
+  isOtpVerificationNeeded: React.Dispatch<React.SetStateAction<boolean>>;
+  relogin: boolean;
+}
 
-export default function LoginForm({ className }: Props) {
+const reLogin = async (
+  loginDetails: { phone: number; password: string },
+  toastDisplayer: (message: string, status: string) => void,
+  navigate: NavigateFunction,
+  isOtpVerificationNeeded: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  const loginHelper = new LoginHelper(
+    loginDetails.phone,
+    loginDetails.password,
+    toastDisplayer,
+    navigate,
+    isOtpVerificationNeeded
+  );
+  await loginHelper.login();
+};
+
+export default function LoginForm({ className, isOtpVerificationNeeded, relogin }: Props) {
   const [loginDetails, setLoginDetails] = useState({
     phone: 0,
     password: "",
@@ -17,6 +36,20 @@ export default function LoginForm({ className }: Props) {
 
   const toastCtxPayload = useContext(ToastContext);
   if (!toastCtxPayload) throw new Error("Toast context payload is null!");
+
+  useEffect(() => {
+    if (relogin) {
+      // Get the login details from cache
+      const loginDetailsStr = sessionStorage.getItem("login-details");
+      loginDetailsStr &&
+        reLogin(
+          JSON.parse(loginDetailsStr),
+          toastCtxPayload.displayToast,
+          navigate,
+          isOtpVerificationNeeded
+        );
+    }
+  }, [relogin, toastCtxPayload.displayToast, navigate, isOtpVerificationNeeded]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.currentTarget;
@@ -45,14 +78,11 @@ export default function LoginForm({ className }: Props) {
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent page refresh
 
-    //Submit the form
-    const loginHelper = new LoginHelper(
-      loginDetails.phone,
-      loginDetails.password,
-      toastCtxPayload.displayToast,
-      navigate
-    );
-    await loginHelper.login();
+    // Store the login details in session storage
+    sessionStorage.setItem("login-details", JSON.stringify(loginDetails));
+
+    // Login
+    reLogin(loginDetails, toastCtxPayload.displayToast, navigate, isOtpVerificationNeeded);
   };
 
   return (
