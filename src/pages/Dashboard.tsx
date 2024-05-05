@@ -36,7 +36,7 @@ export default function Dashboard() {
           </div>
           <LogoutButton />
         </section>
-        <section className="content w-[85%] rounded-lg bg-gray-100 shadow-xl">
+        <section className="content w-[85%] rounded-lg overflow-hidden bg-gray-100 shadow-xl">
           {selectedOption.includes("1") && <ProductTable />}
         </section>
       </div>
