@@ -6,12 +6,10 @@ export default function useAuthentication(pathname: string) {
 
   useEffect(() => {
     // Check if the auth token exists in cookie
-    const auth_token_exists = Token.check_for_auth_token();
+    const accessTokenExists = Token.checkForAccessToken();
 
-    if (auth_token_exists) {
-      // Authorize the user
-      set_is_authenticated(true);
-    }
+    if (accessTokenExists) set_is_authenticated(true); // Authorize the user
+    else set_is_authenticated(false); // Unauthorize the user
   }, [pathname]);
 
   return { is_authenticated };
