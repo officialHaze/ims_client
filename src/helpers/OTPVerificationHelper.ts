@@ -35,10 +35,8 @@ export default class OTPVerificationHelper {
     } catch (err: any) {
       console.error(err.response);
 
-      const errStatus = err.response.status;
-
       // Handle generic error
-      Handler.handleError({ errMsg: err.response.data.error, errStatus }, options.toastDisplayer);
+      Handler.handleError(err, options.toastDisplayer);
     }
   }
 }

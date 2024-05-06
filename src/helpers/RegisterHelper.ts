@@ -24,10 +24,8 @@ export default class RegistrationHelper {
     } catch (err: any) {
       console.error(err.response);
 
-      const errStatus = err.response.status;
-
       // Handle generic error
-      Handler.handleError({ errMsg: err.response.data.error, errStatus }, toastDisplayer);
+      Handler.handleError(err, toastDisplayer);
     }
   }
 }
