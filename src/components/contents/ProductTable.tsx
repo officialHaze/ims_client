@@ -1,11 +1,11 @@
 import React, { ReactNode } from "react";
 import AddProductButton from "../buttons/AddProductButton";
 import Table from "../Table";
-import dummyData from "../../dummyProductData.json";
 import ProductListQueryData from "../../interfaces/ProductListQueryData";
 import RefreshButton from "../buttons/RefreshButton";
 import { UseQueryResult } from "@tanstack/react-query";
 import ProductListQueryResponse from "../../interfaces/ProductListQueryResponse";
+import { TbFaceIdError } from "react-icons/tb";
 
 interface Props extends React.HTMLProps<HTMLElement> {
   productList: ProductListQueryData[];
@@ -39,6 +39,31 @@ export default function ProductTable({ className, productList, productQuery }: P
     productQuery.refetch();
   };
 
+  // When fetching data
+  if (productQuery.isLoading) {
+    return (
+      <div className={`h-full flex flex-col items-center justify-center ${className}`}>
+        <img src="/assets/loading-icon.gif" alt="loading..." className="w-[10%]" />
+        <em className="p-8 text-xl font-bold text-gray-500">
+          Please wait while we fetch your data...
+        </em>
+      </div>
+    );
+  }
+
+  // When there is an error while fetching data
+  if (productQuery.isError) {
+    return (
+      <div className={`h-full flex flex-col items-center justify-center ${className}`}>
+        <TbFaceIdError className="text-8xl text-gray-500" />
+        <em className="p-4 text-xl font-bold text-gray-500">
+          Aw snap! Something went wrong! Please try back after sometime.
+        </em>
+      </div>
+    );
+  }
+
+  // When data is fetched
   return (
     <div className={`${className}`}>
       <section className="header flex items-center justify-between p-4">
@@ -51,7 +76,7 @@ export default function ProductTable({ className, productList, productQuery }: P
         <RefreshButton onClick={handleRefresh} />
       </section>
       <section className="table p-4 w-full">
-        {dummyData.length > 0 ? (
+        {productList.length > 0 ? (
           <Table
             columnLabels={["S.No", "Product", "Buy price", "Sell price", "Stock (Qty)"]}
             rowData={serializeRows(productList)}
