@@ -1,15 +1,12 @@
 import React from "react";
 import LogoutHelper from "../../helpers/LogoutHelper";
-import { useNavigate } from "react-router-dom";
 
 interface Props extends React.HTMLProps<HTMLButtonElement> {}
 
 export default function LogoutButton({ className }: Props) {
-  const navigate = useNavigate();
-
   const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
     // Call the logout helper method
-    LogoutHelper.logout(navigate);
+    LogoutHelper.logout();
   };
 
   return (
