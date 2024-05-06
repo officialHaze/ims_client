@@ -10,6 +10,9 @@ import Navbar from "./components/Navbar";
 import useToastMessage from "./custom_hooks/useToastMessage";
 import ToastPopup from "./components/ToastPopup";
 import Register from "./pages/Register";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export const ToastContext = createContext<{
   displayToast: (message: string, status: string) => void;
@@ -22,25 +25,30 @@ function App() {
   const { isVisible, displayToast, hideToast, toastDetails } = useToastMessage();
 
   return (
-    <ToastContext.Provider value={{ displayToast, hideToast }}>
-      <div className="App relative">
-        <Navbar path={pathname} />
-        {isVisible && (
-          <ToastPopup toastMessage={toastDetails.message} toastStatus={toastDetails.status} />
-        )}
-        <Routes>
-          <Route path={LANDING} element={<Navigate to={LOGIN} />} />
+    <QueryClientProvider client={queryClient}>
+      <ToastContext.Provider value={{ displayToast, hideToast }}>
+        <div className="App relative">
+          <Navbar path={pathname} />
+          {isVisible && (
+            <ToastPopup toastMessage={toastDetails.message} toastStatus={toastDetails.status} />
+          )}
+          <Routes>
+            <Route path={LANDING} element={<Navigate to={LOGIN} />} />
 
-          <Route path={LOGIN} element={is_authenticated ? <Navigate to={HOME} /> : <Login />} />
-          <Route
-            path={REGISTER}
-            element={is_authenticated ? <Navigate to={HOME} /> : <Register />}
-          />
+            <Route path={LOGIN} element={is_authenticated ? <Navigate to={HOME} /> : <Login />} />
+            <Route
+              path={REGISTER}
+              element={is_authenticated ? <Navigate to={HOME} /> : <Register />}
+            />
 
-          <Route path={HOME} element={is_authenticated ? <Dashboard /> : <Navigate to={LOGIN} />} />
-        </Routes>
-      </div>
-    </ToastContext.Provider>
+            <Route
+              path={HOME}
+              element={is_authenticated ? <Dashboard /> : <Navigate to={LOGIN} />}
+            />
+          </Routes>
+        </div>
+      </ToastContext.Provider>
+    </QueryClientProvider>
   );
 }
 

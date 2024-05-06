@@ -58,7 +58,7 @@ export default class LoginHelper {
       }
 
       // Handle generic error
-      Handler.handleError({ errMsg: err.response.data.error, errStatus }, this.toastDisplayer);
+      Handler.handleError(err, this.toastDisplayer);
     }
   }
 }

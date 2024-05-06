@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import sidePanelOptions from "../json/sidePanelOptions.json";
 import SidePanelOption from "../components/SidePanelOption";
 import LogoutButton from "../components/buttons/LogoutButton";
 import SearchBar from "../components/SearchBar";
 import ProductTable from "../components/contents/ProductTable";
+import { useQuery } from "@tanstack/react-query";
+import getProductList from "../queries/GetProductList";
+import { ToastContext } from "../App";
 
 export default function Dashboard() {
   const [selectedOption, selectOption] = useState("1");
@@ -13,6 +16,15 @@ export default function Dashboard() {
 
     selectOption(id);
   };
+
+  const toastCtxPayload = useContext(ToastContext);
+  if (!toastCtxPayload) throw new Error("Toast context payload is null!");
+
+  // Product list query
+  const productQuery = useQuery({
+    queryKey: ["product"],
+    queryFn: () => getProductList(toastCtxPayload.displayToast),
+  });
 
   return (
     <div className="h-screen relative bg-gradient-to-r from-[#8C52FF] to-[#5CE1E6]">
@@ -37,7 +49,9 @@ export default function Dashboard() {
           <LogoutButton />
         </section>
         <section className="content w-[85%] rounded-lg overflow-hidden bg-gray-100 shadow-xl">
-          {selectedOption.includes("1") && <ProductTable />}
+          {selectedOption.includes("1") && (
+            <ProductTable productList={productQuery.data?.products || []} />
+          )}
         </section>
       </div>
     </div>
