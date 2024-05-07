@@ -185,7 +185,12 @@ export default function RegisterForm({ className }: Props) {
     }
 
     // Call the helper method to help with the registration
-    RegistrationHelper.register(registerDetails, toastCtxPayload.displayToast, navigate);
+    const registrationHelper = new RegistrationHelper(
+      registerDetails,
+      toastCtxPayload.displayToast,
+      navigate
+    );
+    registrationHelper.register();
   };
 
   return (

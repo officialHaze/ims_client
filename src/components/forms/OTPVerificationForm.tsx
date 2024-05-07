@@ -101,7 +101,7 @@ export default function OTPVerificationForm({
     }
 
     // Call the helper method for otp verification
-    OTPVerificationHelper.verify(
+    const otpVerificationHelper = new OTPVerificationHelper(
       otpDigit[1],
       otpDigit[2],
       otpDigit[3],
@@ -114,6 +114,7 @@ export default function OTPVerificationForm({
         relogin: relogin,
       }
     );
+    otpVerificationHelper.verify();
   };
 
   return (

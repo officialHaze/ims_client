@@ -1,6 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
 import axiosInstance from "../axiosConfig";
-import Handler from "../handlers/Handler";
+import ErrorHandler from "../handlers/ErrorHandler";
 import Token from "../utils/Token";
 import { HOME } from "../utils/Routes";
 
@@ -14,6 +14,8 @@ export default class LoginHelper {
 
   private isOtpVerificationNeeded: React.Dispatch<React.SetStateAction<boolean>>;
 
+  private errorHandler: ErrorHandler;
+
   constructor(
     phone: number,
     password: string,
@@ -26,6 +28,8 @@ export default class LoginHelper {
     this.toastDisplayer = toastDisplayer;
     this.navigate = navigate;
     this.isOtpVerificationNeeded = isOtpVerificationNeeded;
+
+    this.errorHandler = new ErrorHandler(() => this.login(), this.toastDisplayer);
   }
 
   public async login() {
@@ -58,7 +62,7 @@ export default class LoginHelper {
       }
 
       // Handle generic error
-      Handler.handleError(err, this.toastDisplayer);
+      this.errorHandler.handleError(err);
     }
   }
 }

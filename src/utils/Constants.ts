@@ -13,3 +13,6 @@ export const OTP_INPUT = "OTP_INPUT";
 // Toast status
 export const ERROR_TOAST = "ERROR_TOAST";
 export const SUCCESS_TOAST = "SUCCESS_TOAST";
+
+// Modal types
+export const ADD_PRODUCT_MODAL = "ADD_PRODUCT_MODAL";

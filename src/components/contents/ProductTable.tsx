@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useContext } from "react";
 import AddProductButton from "../buttons/AddProductButton";
 import Table from "../Table";
 import ProductListQueryData from "../../interfaces/ProductListQueryData";
@@ -6,6 +6,8 @@ import RefreshButton from "../buttons/RefreshButton";
 import { UseQueryResult } from "@tanstack/react-query";
 import ProductListQueryResponse from "../../interfaces/ProductListQueryResponse";
 import { TbFaceIdError } from "react-icons/tb";
+import { ModalContext } from "../../App";
+import { ADD_PRODUCT_MODAL } from "../../utils/Constants";
 
 interface Props extends React.HTMLProps<HTMLElement> {
   productList: ProductListQueryData[];
@@ -34,9 +36,21 @@ const serializeRows = (data: ProductListQueryData[]) => {
 };
 
 export default function ProductTable({ className, productList, productQuery }: Props) {
+  const modalCtxPayload = useContext(ModalContext);
+  if (!modalCtxPayload) return <pre>Modal context payload is null</pre>;
+
   const handleRefresh = () => {
     // Refetch the data
     productQuery.refetch();
+  };
+
+  const displayAddProductModalForm = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Display the modal containing add product form
+    modalCtxPayload.controlModalDisplay({
+      toDisplay: true,
+      modalType: ADD_PRODUCT_MODAL,
+      extraPayload: productQuery,
+    });
   };
 
   // When fetching data
@@ -71,7 +85,7 @@ export default function ProductTable({ className, productList, productQuery }: P
           <div className="filter rounded-full p-1 w-24 border-2 border-blue-500 cursor-pointer">
             Filter
           </div>
-          <AddProductButton />
+          <AddProductButton onClick={displayAddProductModalForm} />
         </div>
         <RefreshButton onClick={handleRefresh} />
       </section>
