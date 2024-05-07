@@ -106,6 +106,7 @@ export default function AddProductForm({ productQuery }: Props) {
             className="input-box"
             value={addProductDetails.product_name}
             onChange={handleChange}
+            autoComplete="off"
           />
         </div>
         <div className="w-[48%]">
@@ -114,10 +115,12 @@ export default function AddProductForm({ productQuery }: Props) {
           </label>
           <input
             id="buy-price-input"
+            placeholder="0.00"
             type="number"
             className="input-box text-right"
             value={addProductDetails.buy_price || ""}
             onChange={handleChange}
+            autoComplete="off"
           />
         </div>
         <div className="w-[48%]">
@@ -125,11 +128,13 @@ export default function AddProductForm({ productQuery }: Props) {
             <p className="text-left py-1 font-bold">Sell price</p>
           </label>
           <input
+            placeholder="0.00"
             id="sell-price-input"
             type="text"
-            className="input-box"
+            className="input-box text-right"
             value={addProductDetails.sell_price || ""}
             onChange={handleChange}
+            autoComplete="off"
           />
         </div>
         <div className="w-[48%]">
@@ -142,6 +147,7 @@ export default function AddProductForm({ productQuery }: Props) {
             className="input-box"
             value={addProductDetails.stock || ""}
             onChange={handleChange}
+            autoComplete="off"
           />
         </div>
       </section>
