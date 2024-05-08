@@ -1,5 +1,5 @@
 import React from "react";
-import AddProductForm from "./AddProductForm";
+import AddProductModal from "./AddProductModal";
 import { ADD_PRODUCT_MODAL } from "../../utils/Constants";
 
 interface Props extends React.HTMLProps<HTMLElement> {
@@ -14,7 +14,7 @@ interface Props extends React.HTMLProps<HTMLElement> {
 export default function Modal({ className, modalType, modalPayload }: Props) {
   return (
     <div className="absolute w-full h-screen z-[12] bg-[#00000060] flex items-center justify-center">
-      {modalType === ADD_PRODUCT_MODAL && <AddProductForm productQuery={modalPayload} />}
+      {modalType === ADD_PRODUCT_MODAL && <AddProductModal productQuery={modalPayload} />}
     </div>
   );
 }
