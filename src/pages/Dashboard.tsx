@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import sidePanelOptions from "../json/sidePanelOptions.json";
 import SidePanelOption from "../components/SidePanelOption";
 import LogoutButton from "../components/buttons/LogoutButton";
@@ -8,6 +8,12 @@ import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import getProductList from "../queries/GetProductList";
 import { ToastContext } from "../App";
 import ProductListQueryResponse from "../interfaces/ProductListQueryResponse";
+import ProductListQueryData from "../interfaces/ProductListQueryData";
+import Filter from "../utils/Filter";
+
+const searchBarPlaceholderMap: any = {
+  1: "products",
+};
 
 export default function Dashboard() {
   const [selectedOption, selectOption] = useState("1");
@@ -18,6 +24,9 @@ export default function Dashboard() {
     selectOption(id);
   };
 
+  const [productList, setProductList] = useState<ProductListQueryData[]>([]);
+  // console.log
+
   const toastCtxPayload = useContext(ToastContext);
   if (!toastCtxPayload) throw new Error("Toast context payload is null!");
 
@@ -27,12 +36,41 @@ export default function Dashboard() {
     queryFn: () => getProductList(toastCtxPayload.displayToast),
   });
 
+  useEffect(() => {
+    setProductList(productQuery.data?.products || []);
+
+    return () => setProductList([]);
+  }, [productQuery.data]);
+
+  // Function to handle search
+  const handleSearch = (searchParam: string) => {
+    // Update the necessary list based on the selected option
+    // on the left side panel
+    switch (selectedOption) {
+      case "1":
+        // Update the product list
+        const filteredList = Filter.filterProductListByName(
+          productQuery.data?.products || [],
+          searchParam
+        );
+        console.log(filteredList);
+        setProductList([...filteredList]);
+        break;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="h-screen relative bg-gradient-to-r from-[#8C52FF] to-[#5CE1E6]">
       <div className="header flex items-center justify-between absolute w-full px-32 py-4">
         <h1 className="font-bold text-4xl font-bauhaus_extrabold text-white">IMS</h1>
-        <SearchBar className="w-[24rem]" />
-        {/* <button>Add new product</button> */}
+        <SearchBar
+          className="w-[24rem]"
+          searchFor={searchBarPlaceholderMap[selectedOption] || ""}
+          handleChangeInSearchParam={handleSearch}
+        />
       </div>
       <div className="flex gap-8 h-full pt-20 pb-10 px-10">
         <section className="side-panel w-[15%] rounded-lg overflow-hidden bg-gray-100 shadow-xl flex flex-col justify-between py-6 px-4">
@@ -51,10 +89,7 @@ export default function Dashboard() {
         </section>
         <section className="content w-[85%] rounded-lg overflow-hidden bg-gray-100 shadow-xl">
           {selectedOption.includes("1") && (
-            <ProductTable
-              productList={productQuery.data?.products || []}
-              productQuery={productQuery}
-            />
+            <ProductTable productList={productList} productQuery={productQuery} />
           )}
         </section>
       </div>
