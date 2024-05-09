@@ -16,3 +16,4 @@ export const SUCCESS_TOAST = "SUCCESS_TOAST";
 
 // Modal types
 export const ADD_PRODUCT_MODAL = "ADD_PRODUCT_MODAL";
+export const EDIT_PRODUCT_MODAL = "EDIT_PRODUCT_MODAL";

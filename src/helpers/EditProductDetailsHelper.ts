@@ -5,8 +5,9 @@ import AddProductData from "../interfaces/AddProductData";
 import ProductListQueryResponse from "../interfaces/ProductListQueryResponse";
 import { ERROR_TOAST } from "../utils/Constants";
 
-export default class AddProductHelper {
+export default class EditProductDetailsHelper {
   private productData: AddProductData;
+  private productId: string;
   private toastDisplayer: (message: string, status: string) => void;
   private productQuery: UseQueryResult<ProductListQueryResponse, Error>;
 
@@ -14,27 +15,33 @@ export default class AddProductHelper {
 
   constructor({
     productData,
+    productId,
     toastDisplayer,
     productQuery,
   }: {
     productData: AddProductData;
+    productId: string;
     toastDisplayer: (message: string, status: string) => void;
     productQuery: UseQueryResult<ProductListQueryResponse, Error>;
   }) {
     this.productData = productData;
+    this.productId = productId;
     this.toastDisplayer = toastDisplayer;
     this.productQuery = productQuery;
 
-    this.errorHandler = new ErrorHandler(() => this.addProduct(), this.toastDisplayer);
+    this.errorHandler = new ErrorHandler(() => this.edit(), this.toastDisplayer);
   }
 
-  public async addProduct() {
+  public async edit() {
     try {
       if (!this.productData.product_name)
         return this.toastDisplayer("Please provide a product name", ERROR_TOAST);
 
-      const { data } = await axiosInstance.post("/auth/add-single-product", this.productData);
-      console.log({ response_after_adding_product: data });
+      const { data } = await axiosInstance.put("/auth/edit-product-details", {
+        ...this.productData,
+        product_id: this.productId,
+      });
+      console.log({ response_after_editing_product_details: data });
       this.productQuery.refetch();
     } catch (err) {
       this.errorHandler.handleError(err);

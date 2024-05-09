@@ -52,19 +52,22 @@ export default class ErrorHandler {
     if (errStatus === 401 && errMessage.toLowerCase().includes("expired")) {
       // Handle token expiry error
       this.handleTokenExpiryError();
+      // retry for 4 times on access token expiry
+      if (this.queryFn) {
+        if (this.pollCount <= 4) {
+          this.pollCount++;
+          setTimeout(() => {
+            this.queryFn && this.queryFn();
+          }, 1000);
+        } else {
+          // Display a error toast message
+          this.toastDisplayer(errMessage, this.responseStatusMap[errStatus]);
+          this.pollCount = 0; // Reset
+        }
+      }
+      return;
     }
 
-    if (this.queryFn) {
-      if (this.pollCount <= 4) {
-        this.pollCount++;
-        setTimeout(() => {
-          this.queryFn && this.queryFn();
-        }, 1000);
-      } else {
-        // Display a error toast message
-        this.toastDisplayer(errMessage, this.responseStatusMap[errStatus]);
-        this.pollCount = 0; // Reset
-      }
-    }
+    this.toastDisplayer(errMessage, this.responseStatusMap[errStatus]);
   }
 }

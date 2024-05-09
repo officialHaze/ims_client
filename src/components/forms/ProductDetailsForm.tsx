@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaIndianRupeeSign, FaPlus, FaMinus } from "react-icons/fa6";
 
 interface Props extends React.HTMLProps<HTMLFormElement> {
@@ -7,18 +7,54 @@ interface Props extends React.HTMLProps<HTMLFormElement> {
     buy_price: number;
     sell_price: number;
     stock: number;
+    productId?: string;
   }) => void;
 
   submitButtonLabel: string;
+
+  // For editing purposes
+  productName?: string;
+  buyPrice?: number;
+  sellPrice?: number;
+  stock?: number;
+  productId?: string;
 }
 
-export default function ProductDetailsForm({ handleFormSubmit, submitButtonLabel }: Props) {
+export default function ProductDetailsForm({
+  handleFormSubmit,
+  submitButtonLabel,
+  productName,
+  buyPrice,
+  sellPrice,
+  stock,
+  productId,
+}: Props) {
   const [productDetails, setProductDetails] = useState({
     product_name: "",
     buy_price: 0,
     sell_price: 0,
     stock: 0,
   });
+
+  // Set the default values for product details if any
+  useEffect(() => {
+    setProductDetails(prevState => {
+      return {
+        product_name: productName || prevState.product_name,
+        buy_price: buyPrice || prevState.buy_price,
+        sell_price: sellPrice || prevState.sell_price,
+        stock: stock || prevState.stock,
+      };
+    });
+
+    return () =>
+      setProductDetails({
+        product_name: "",
+        buy_price: 0,
+        sell_price: 0,
+        stock: 0,
+      });
+  }, [productName, buyPrice, sellPrice, stock]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.currentTarget;
@@ -60,7 +96,7 @@ export default function ProductDetailsForm({ handleFormSubmit, submitButtonLabel
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the page from reloading
 
-    handleFormSubmit(productDetails);
+    handleFormSubmit({ ...productDetails, productId: productId || "" });
   };
 
   return (

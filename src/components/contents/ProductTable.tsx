@@ -7,7 +7,9 @@ import { UseQueryResult } from "@tanstack/react-query";
 import ProductListQueryResponse from "../../interfaces/ProductListQueryResponse";
 import { TbFaceIdError } from "react-icons/tb";
 import { ModalContext } from "../../App";
-import { ADD_PRODUCT_MODAL } from "../../utils/Constants";
+import { ADD_PRODUCT_MODAL, EDIT_PRODUCT_MODAL } from "../../utils/Constants";
+import { FaIndianRupeeSign } from "react-icons/fa6";
+import { MdEdit, MdDelete } from "react-icons/md";
 
 interface Props extends React.HTMLProps<HTMLElement> {
   productList: ProductListQueryData[];
@@ -18,16 +20,57 @@ const isOdd = (num: number) => {
   return Math.floor(num % 2) !== 0;
 };
 
-const serializeRows = (data: ProductListQueryData[]) => {
+interface RowSerializerOptions {
+  handleProductEdit: (
+    productName: string,
+    buyPrice: number,
+    sellPrice: number,
+    stock: number,
+    productId: string
+  ) => void;
+}
+
+const serializeRows = (data: ProductListQueryData[], { ...options }: RowSerializerOptions) => {
   const serializedRows: ReactNode[] = [];
   data.forEach((item, idx) => {
     serializedRows.push(
       <tr id={item.id} key={item.id} className={`${isOdd(idx) && "bg-gray-200"}`}>
         <td className="p-2">{idx + 1}</td>
         <td>{item.product_name}</td>
-        <td>{item.buy_price}</td>
-        <td>{item.sell_price}</td>
+        <td>
+          <div className="flex items-center justify-center relative">
+            <span className="absolute left-8">
+              <FaIndianRupeeSign />
+            </span>{" "}
+            {item.buy_price}
+          </div>
+        </td>
+        <td>
+          <div className="flex items-center justify-center relative">
+            <span className="absolute left-8">
+              <FaIndianRupeeSign />
+            </span>
+            {item.sell_price}
+          </div>
+        </td>
         <td>{item.stock}</td>
+        <td>
+          <div className="flex items-center justify-center gap-6 text-xl">
+            <MdEdit
+              className="cursor-pointer"
+              onClick={() =>
+                options.handleProductEdit(
+                  item.product_name,
+                  parseFloat(item.buy_price || "0"),
+                  parseFloat(item.sell_price || "0"),
+                  item.stock || 0,
+                  item.id
+                )
+              }
+            />
+            <MdDelete className="cursor-pointer text-red-500" />
+          </div>
+        </td>
       </tr>
     );
   });
@@ -77,6 +120,29 @@ export default function ProductTable({ className, productList, productQuery }: P
     );
   }
 
+  // Function to handle product edit
+  const handleProductEdit = (
+    productName: string,
+    buyPrice: number,
+    sellPrice: number,
+    stock: number,
+    productId: string
+  ) => {
+    // Open the Product edit modal
+    modalCtxPayload.controlModalDisplay({
+      toDisplay: true,
+      modalType: EDIT_PRODUCT_MODAL,
+      extraPayload: {
+        productQuery,
+        productName,
+        buyPrice,
+        sellPrice,
+        stock,
+        productId,
+      },
+    });
+  };
+
   // When data is fetched
   return (
     <div className={`${className}`}>
@@ -92,8 +158,8 @@ export default function ProductTable({ className, productList, productQuery }: P
       <section className="table p-4 w-full">
         {productList.length > 0 ? (
           <Table
-            columnLabels={["S.No", "Product", "Buy price", "Sell price", "Stock (Qty)"]}
-            rowData={serializeRows(productList)}
+            columnLabels={["S.No", "Product", "Buy price", "Sell price", "Stock (Qty)", "Actions"]}
+            rowData={serializeRows(productList, { handleProductEdit })}
           />
         ) : (
           <div className="h-[25rem] flex items-center justify-center text-2xl font-bold text-gray-400">
