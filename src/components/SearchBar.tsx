@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { BsSearch } from "react-icons/bs";
 
 interface Props extends React.HTMLProps<HTMLElement> {
@@ -16,7 +16,7 @@ export default function SearchBar({ className, searchFor, handleChangeInSearchPa
   };
 
   return (
-    <form className="flex rounded-md overflow-hidden">
+    <div className="flex rounded-md overflow-hidden">
       <input
         type="text"
         placeholder={`Type to search for ${searchFor}`}
@@ -27,6 +27,6 @@ export default function SearchBar({ className, searchFor, handleChangeInSearchPa
       <button className="bg-black text-white py-3 px-4">
         <BsSearch />
       </button>
-    </form>
+    </div>
   );
 }
