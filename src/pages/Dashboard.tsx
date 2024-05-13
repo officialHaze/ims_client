@@ -10,6 +10,7 @@ import { ToastContext } from "../App";
 import ProductListQueryResponse from "../interfaces/ProductListQueryResponse";
 import ProductListQueryData from "../interfaces/ProductListQueryData";
 import Filter from "../utils/Filter";
+import Listing from "../components/contents/Listing";
 
 const searchBarPlaceholderMap: any = {
   1: "products",
@@ -67,6 +68,7 @@ export default function Dashboard() {
       <div className="header flex items-center justify-between absolute w-full px-32 py-4">
         <h1 className="font-bold text-4xl font-bauhaus_extrabold text-white">IMS</h1>
         <SearchBar
+          disabled={selectedOption.includes("4")}
           className="w-[24rem]"
           searchFor={searchBarPlaceholderMap[selectedOption] || ""}
           handleChangeInSearchParam={handleSearch}
@@ -88,9 +90,12 @@ export default function Dashboard() {
           <LogoutButton />
         </section>
         <section className="content w-[85%] rounded-lg overflow-hidden bg-gray-100 shadow-xl">
+          {/* Product related */}
           {selectedOption.includes("1") && (
             <ProductTable productList={productList} productQuery={productQuery} />
           )}
+          {/* Listing related */}
+          {selectedOption.includes("4") && <Listing />}
         </section>
       </div>
     </div>

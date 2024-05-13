@@ -6,7 +6,12 @@ interface Props extends React.HTMLProps<HTMLElement> {
   handleChangeInSearchParam: (searchParam: string) => void;
 }
 
-export default function SearchBar({ className, searchFor, handleChangeInSearchParam }: Props) {
+export default function SearchBar({
+  disabled,
+  className,
+  searchFor,
+  handleChangeInSearchParam,
+}: Props) {
   const [searchParam, setSearchParam] = useState("");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -18,9 +23,10 @@ export default function SearchBar({ className, searchFor, handleChangeInSearchPa
   return (
     <div className="flex rounded-md overflow-hidden">
       <input
+        disabled={disabled}
         type="text"
-        placeholder={`Type to search for ${searchFor}`}
-        className={`px-2 py-1 outline-none ${className}`}
+        placeholder={disabled ? "Type to search" : `Type to search for ${searchFor}`}
+        className={`px-2 py-1 outline-none ${disabled && "bg-gray-300"} ${className}`}
         value={searchParam}
         onChange={handleChange}
       />

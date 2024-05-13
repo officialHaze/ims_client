@@ -57,6 +57,7 @@ const serializeRows = (data: ProductListQueryData[], { ...options }: RowSerializ
           </div>
         </td>
         <td>{item.stock}</td>
+        <td>{item.storage_location}</td>
         <td>
           <div className="flex items-center justify-center gap-6 text-xl">
             <MdEdit
@@ -195,7 +196,15 @@ export default function ProductTable({ className, productList, productQuery }: P
       <section className="table p-4 w-full">
         {productList.length > 0 ? (
           <Table
-            columnLabels={["S.No", "Product", "Buy price", "Sell price", "Stock (Qty)", "Actions"]}
+            columnLabels={[
+              "S.No",
+              "Product",
+              "Buy price",
+              "Sell price",
+              "Stock (Qty)",
+              "Storage Location",
+              "Actions",
+            ]}
             rowData={serializeRows(productList, { handleProductEdit, handleProductDelete })}
           />
         ) : (
