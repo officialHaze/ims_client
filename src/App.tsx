@@ -14,14 +14,18 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import LogoutHelper from "./helpers/LogoutHelper";
 import useModal from "./custom_hooks/useModal";
 import Modal from "./components/modals/Modal";
+import { Task } from "./handlers/TaskQueuer";
+import useQueueTask from "./custom_hooks/useQueueTask";
 
 const queryClient = new QueryClient();
 
+// Toast context
 export const ToastContext = createContext<{
   displayToast: (message: string, status: string) => void;
   hideToast: () => void;
 } | null>(null);
 
+// Modal context
 export const ModalContext = createContext<{
   controlModalDisplay: ({
     toDisplay,
@@ -34,11 +38,19 @@ export const ModalContext = createContext<{
   }) => void;
 } | null>(null);
 
+// Queue task context
+export const QueueTaskContext = createContext<{
+  updateQueuedTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+} | null>(null);
+
 function App() {
   const pathname = useRoute();
   const { is_authenticated } = useAuthentication(pathname);
   const { isVisible, displayToast, hideToast, toastDetails } = useToastMessage();
   const { toDisplayModal, modalType, modalPayload, controlModalDisplay } = useModal();
+
+  const { queuedTasks, setQueuedTasks: updateQueuedTasks } = useQueueTask();
+  console.log(queuedTasks);
 
   const navigate = useNavigate();
 
@@ -51,29 +63,44 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ToastContext.Provider value={{ displayToast, hideToast }}>
         <ModalContext.Provider value={{ controlModalDisplay }}>
-          <div className="App relative">
-            <Navbar path={pathname} />
-            {/* Toast message */}
-            {isVisible && (
-              <ToastPopup toastMessage={toastDetails.message} toastStatus={toastDetails.status} />
-            )}
-            {/* Modal */}
-            {toDisplayModal && <Modal modalType={modalType} modalPayload={modalPayload} />}
-            <Routes>
-              <Route path={LANDING} element={<Navigate to={LOGIN} />} />
+          <QueueTaskContext.Provider value={{ updateQueuedTasks }}>
+            <div className="App relative">
+              <Navbar path={pathname} />
+              {/* Toast message */}
+              {isVisible && (
+                <ToastPopup toastMessage={toastDetails.message} toastStatus={toastDetails.status} />
+              )}
+              {/* Modal */}
+              {toDisplayModal && <Modal modalType={modalType} modalPayload={modalPayload} />}
 
-              <Route path={LOGIN} element={is_authenticated ? <Navigate to={HOME} /> : <Login />} />
-              <Route
-                path={REGISTER}
-                element={is_authenticated ? <Navigate to={HOME} /> : <Register />}
-              />
+              {/* Queue Task status */}
+              <div className="absolute bottom-0 right-0 z-50">
+                {queuedTasks.map(task => (
+                  <div className="p-4 bg-red-500 text-white m-4" key={task.getTaskId()}>
+                    {task.getTaskPayload().status}
+                  </div>
+                ))}
+              </div>
 
-              <Route
-                path={HOME}
-                element={is_authenticated ? <Dashboard /> : <Navigate to={LOGIN} />}
-              />
-            </Routes>
-          </div>
+              <Routes>
+                <Route path={LANDING} element={<Navigate to={LOGIN} />} />
+
+                <Route
+                  path={LOGIN}
+                  element={is_authenticated ? <Navigate to={HOME} /> : <Login />}
+                />
+                <Route
+                  path={REGISTER}
+                  element={is_authenticated ? <Navigate to={HOME} /> : <Register />}
+                />
+
+                <Route
+                  path={HOME}
+                  element={is_authenticated ? <Dashboard /> : <Navigate to={LOGIN} />}
+                />
+              </Routes>
+            </div>
+          </QueueTaskContext.Provider>
         </ModalContext.Provider>
       </ToastContext.Provider>
     </QueryClientProvider>

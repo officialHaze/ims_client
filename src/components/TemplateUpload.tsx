@@ -4,7 +4,7 @@ import Dropbox from "./Dropbox";
 
 export default function TemplateUpload() {
   return (
-    <div>
+    <div className="w-1/2 h-[17.5rem]">
       <FileUploader children={<Dropbox />} />
     </div>
   );

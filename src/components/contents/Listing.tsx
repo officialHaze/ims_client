@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import ProductListing from "./listingSubTypes/ProductListing";
 
-interface Props extends React.HTMLProps<HTMLElement> {}
+// interface Props extends React.HTMLProps<HTMLElement> {}
 
 const listingSubTypesMap: any = {
   0: <ProductListing />,
 };
 
-export default function Listing({}: Props) {
+export default function Listing() {
   const [selectedListSubType, selectListingSubType] = useState(0);
 
   return (
