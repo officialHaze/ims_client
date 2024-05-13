@@ -4,6 +4,7 @@ export default interface ProductListQueryData {
   buy_price: string | null;
   sell_price: string | null;
   stock: number | null;
+  storage_location: string | null;
   category_id: string | null;
   user_id: string;
   business_id: string | null;
