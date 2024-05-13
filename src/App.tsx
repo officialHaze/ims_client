@@ -12,6 +12,8 @@ import ToastPopup from "./components/ToastPopup";
 import Register from "./pages/Register";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import LogoutHelper from "./helpers/LogoutHelper";
+import useModal from "./custom_hooks/useModal";
+import Modal from "./components/modals/Modal";
 
 const queryClient = new QueryClient();
 
@@ -20,10 +22,23 @@ export const ToastContext = createContext<{
   hideToast: () => void;
 } | null>(null);
 
+export const ModalContext = createContext<{
+  controlModalDisplay: ({
+    toDisplay,
+    modalType,
+    extraPayload,
+  }: {
+    toDisplay: boolean;
+    modalType: string;
+    extraPayload?: any;
+  }) => void;
+} | null>(null);
+
 function App() {
   const pathname = useRoute();
   const { is_authenticated } = useAuthentication(pathname);
   const { isVisible, displayToast, hideToast, toastDetails } = useToastMessage();
+  const { toDisplayModal, modalType, modalPayload, controlModalDisplay } = useModal();
 
   const navigate = useNavigate();
 
@@ -35,26 +50,31 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastContext.Provider value={{ displayToast, hideToast }}>
-        <div className="App relative">
-          <Navbar path={pathname} />
-          {isVisible && (
-            <ToastPopup toastMessage={toastDetails.message} toastStatus={toastDetails.status} />
-          )}
-          <Routes>
-            <Route path={LANDING} element={<Navigate to={LOGIN} />} />
+        <ModalContext.Provider value={{ controlModalDisplay }}>
+          <div className="App relative">
+            <Navbar path={pathname} />
+            {/* Toast message */}
+            {isVisible && (
+              <ToastPopup toastMessage={toastDetails.message} toastStatus={toastDetails.status} />
+            )}
+            {/* Modal */}
+            {toDisplayModal && <Modal modalType={modalType} modalPayload={modalPayload} />}
+            <Routes>
+              <Route path={LANDING} element={<Navigate to={LOGIN} />} />
 
-            <Route path={LOGIN} element={is_authenticated ? <Navigate to={HOME} /> : <Login />} />
-            <Route
-              path={REGISTER}
-              element={is_authenticated ? <Navigate to={HOME} /> : <Register />}
-            />
+              <Route path={LOGIN} element={is_authenticated ? <Navigate to={HOME} /> : <Login />} />
+              <Route
+                path={REGISTER}
+                element={is_authenticated ? <Navigate to={HOME} /> : <Register />}
+              />
 
-            <Route
-              path={HOME}
-              element={is_authenticated ? <Dashboard /> : <Navigate to={LOGIN} />}
-            />
-          </Routes>
-        </div>
+              <Route
+                path={HOME}
+                element={is_authenticated ? <Dashboard /> : <Navigate to={LOGIN} />}
+              />
+            </Routes>
+          </div>
+        </ModalContext.Provider>
       </ToastContext.Provider>
     </QueryClientProvider>
   );

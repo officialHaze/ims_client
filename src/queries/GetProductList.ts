@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosConfig";
-import Handler from "../handlers/Handler";
+import ErrorHandler from "../handlers/ErrorHandler";
 
 export default async function getProductList(
   displayToast: (message: string, status: string) => void
@@ -10,7 +10,8 @@ export default async function getProductList(
 
     return data;
   } catch (err: any) {
-    Handler.handleError(err, displayToast);
+    const errorHandler = new ErrorHandler(null, displayToast);
+    errorHandler.handleError(err);
     throw err;
   }
 }

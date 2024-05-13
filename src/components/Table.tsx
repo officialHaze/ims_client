@@ -7,17 +7,10 @@ interface Props extends React.HTMLProps<HTMLElement> {
 }
 
 export default function Table({ className, columnLabels, rowData }: Props) {
-  const [rowCount, setRowCount] = useState(0);
+  const [rowCount, setRowCount] = useState(10);
   const [rows, setRows] = useState<ReactNode[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-
-  // Set the initial row count
-  useEffect(() => {
-    setRowCount(Math.ceil(rowData.length / 2));
-
-    return () => setRowCount(0);
-  }, [rowData]);
 
   // Filter the rows whenever the row count changes
   useEffect(() => {
