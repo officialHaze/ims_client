@@ -6,8 +6,11 @@ import RefreshButton from "../buttons/RefreshButton";
 import { UseQueryResult } from "@tanstack/react-query";
 import ProductListQueryResponse from "../../interfaces/ProductListQueryResponse";
 import { TbFaceIdError } from "react-icons/tb";
-import { ModalContext } from "../../App";
-import { ADD_PRODUCT_MODAL } from "../../utils/Constants";
+import { ModalContext, ToastContext } from "../../App";
+import { ADD_PRODUCT_MODAL, CONFIRMATION_MODAL, EDIT_PRODUCT_MODAL } from "../../utils/Constants";
+import { FaIndianRupeeSign } from "react-icons/fa6";
+import { MdEdit, MdDelete } from "react-icons/md";
+import RemoveProductHelper from "../../helpers/RemoveProductHelper";
 
 interface Props extends React.HTMLProps<HTMLElement> {
   productList: ProductListQueryData[];
@@ -18,16 +21,62 @@ const isOdd = (num: number) => {
   return Math.floor(num % 2) !== 0;
 };
 
-const serializeRows = (data: ProductListQueryData[]) => {
+interface RowSerializerOptions {
+  handleProductEdit: (
+    productName: string,
+    buyPrice: number,
+    sellPrice: number,
+    stock: number,
+    productId: string
+  ) => void;
+
+  handleProductDelete: (productId: string) => void;
+}
+
+const serializeRows = (data: ProductListQueryData[], { ...options }: RowSerializerOptions) => {
   const serializedRows: ReactNode[] = [];
   data.forEach((item, idx) => {
     serializedRows.push(
       <tr id={item.id} key={item.id} className={`${isOdd(idx) && "bg-gray-200"}`}>
         <td className="p-2">{idx + 1}</td>
         <td>{item.product_name}</td>
-        <td>{item.buy_price}</td>
-        <td>{item.sell_price}</td>
+        <td>
+          <div className="flex items-center justify-center relative">
+            <span className="absolute left-8">
+              <FaIndianRupeeSign />
+            </span>{" "}
+            {item.buy_price}
+          </div>
+        </td>
+        <td>
+          <div className="flex items-center justify-center relative">
+            <span className="absolute left-8">
+              <FaIndianRupeeSign />
+            </span>
+            {item.sell_price}
+          </div>
+        </td>
         <td>{item.stock}</td>
+        <td>
+          <div className="flex items-center justify-center gap-6 text-xl">
+            <MdEdit
+              className="cursor-pointer"
+              onClick={() =>
+                options.handleProductEdit(
+                  item.product_name,
+                  parseFloat(item.buy_price || "0"),
+                  parseFloat(item.sell_price || "0"),
+                  item.stock || 0,
+                  item.id
+                )
+              }
+            />
+            <MdDelete
+              className="cursor-pointer text-red-500"
+              onClick={() => options.handleProductDelete(item.id)}
+            />
+          </div>
+        </td>
       </tr>
     );
   });
@@ -37,7 +86,10 @@ const serializeRows = (data: ProductListQueryData[]) => {
 
 export default function ProductTable({ className, productList, productQuery }: Props) {
   const modalCtxPayload = useContext(ModalContext);
-  if (!modalCtxPayload) return <pre>Modal context payload is null</pre>;
+  if (!modalCtxPayload) throw new Error("Modal context payload is null!");
+
+  const toastCtxPayload = useContext(ToastContext);
+  if (!toastCtxPayload) throw new Error("Toast context payload is null!");
 
   const handleRefresh = () => {
     // Refetch the data
@@ -77,6 +129,57 @@ export default function ProductTable({ className, productList, productQuery }: P
     );
   }
 
+  // Function to handle product edit
+  const handleProductEdit = (
+    productName: string,
+    buyPrice: number,
+    sellPrice: number,
+    stock: number,
+    productId: string
+  ) => {
+    // Open the Product edit modal
+    modalCtxPayload.controlModalDisplay({
+      toDisplay: true,
+      modalType: EDIT_PRODUCT_MODAL,
+      extraPayload: {
+        productQuery,
+        productName,
+        buyPrice,
+        sellPrice,
+        stock,
+        productId,
+      },
+    });
+  };
+
+  // Function to remove / delete product
+  const removeProduct = (productId: string) => {
+    const productRemovalHelper = new RemoveProductHelper(
+      [productId],
+      toastCtxPayload.displayToast,
+      productQuery
+    );
+    productRemovalHelper.remove();
+  };
+
+  // Function to handle removal of product
+  const handleProductDelete = (productId: string) => {
+    // Display a confirmation modal
+    // Pass the message that is to be displayed on the modal body and queryFn (removeProduct) as the modal payload
+    modalCtxPayload.controlModalDisplay({
+      toDisplay: true,
+      modalType: CONFIRMATION_MODAL,
+      extraPayload: {
+        message: (
+          <h1 className="p-4 text-xl font-semibold">
+            Are you sure you want to remove this product?
+          </h1>
+        ),
+        queryFn: () => removeProduct(productId),
+      },
+    });
+  };
+
   // When data is fetched
   return (
     <div className={`${className}`}>
@@ -92,8 +195,8 @@ export default function ProductTable({ className, productList, productQuery }: P
       <section className="table p-4 w-full">
         {productList.length > 0 ? (
           <Table
-            columnLabels={["S.No", "Product", "Buy price", "Sell price", "Stock (Qty)"]}
-            rowData={serializeRows(productList)}
+            columnLabels={["S.No", "Product", "Buy price", "Sell price", "Stock (Qty)", "Actions"]}
+            rowData={serializeRows(productList, { handleProductEdit, handleProductDelete })}
           />
         ) : (
           <div className="h-[25rem] flex items-center justify-center text-2xl font-bold text-gray-400">
