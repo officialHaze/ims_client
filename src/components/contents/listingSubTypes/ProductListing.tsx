@@ -1,26 +1,34 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import TemplateDownload from "../../TemplateDownload";
 import TemplateUpload from "../../TemplateUpload";
-import { PRODUCT_LISTING_TEMPLATE } from "../../../utils/Constants";
+import { ERROR_TOAST, PRODUCT_LISTING_TEMPLATE } from "../../../utils/Constants";
 import UploadButton from "../../buttons/UploadButton";
 import { QueueTaskContext } from "../../../App";
 import TaskQueuer, { Task } from "../../../handlers/TaskQueuer";
+import ProductListingHelper from "../../../helpers/ProductListingHelper";
+import useToastCtx from "../../../custom_hooks/useToastCtx";
 
 export default function ProductListing() {
   const queueTaskCtx = useContext(QueueTaskContext);
   if (!queueTaskCtx) throw new Error("Queue task context is null!");
 
-  const asyncTask = (): Promise<void> => {
-    return new Promise((res, rej) => {
-      setTimeout(() => {
-        rej("Error while completing task");
-      }, 5000);
-    });
-  };
+  const { displayToast } = useToastCtx();
 
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+  // Handle sending the file to backend for further processing
   const handleClick = () => {
+    if (!uploadedFile) return displayToast("Please select a file to upload!", ERROR_TOAST);
+
+    const productListingHelper = new ProductListingHelper({
+      template: uploadedFile,
+      toastDisplayer: displayToast,
+    });
+
+    // productListingHelper.listProduct();
+
     // Create a new task
-    const task = new Task(asyncTask);
+    const task = new Task(async () => productListingHelper.listProduct());
 
     // Call the taskQueuer to queue the task
     TaskQueuer.queueTask(task, queueTaskCtx.updateQueuedTasks);
@@ -33,7 +41,7 @@ export default function ProductListing() {
         <TemplateDownload templateType={PRODUCT_LISTING_TEMPLATE} />
 
         {/* Template uploader */}
-        <TemplateUpload />
+        <TemplateUpload uploadedFile={uploadedFile} setUploadedFile={setUploadedFile} />
       </section>
       <section className="p-4 mt-20">
         <UploadButton onClick={handleClick} />

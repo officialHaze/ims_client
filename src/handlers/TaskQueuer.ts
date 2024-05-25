@@ -70,30 +70,6 @@ export default class TaskQueuer {
       setTimeout(() => {
         this.removeTask(task.getTaskId(), updateQueuedTasksState);
       }, 2000);
-
-      // Only for testing purpose
-      // setTimeout(() => {
-      //   const successPayload: QueueTaskPayload = {
-      //     ...task.getTaskPayload(),
-      //     status: "success",
-      //   };
-      //   task.setPayload(successPayload);
-      //   console.log("Task status updated after 3 seconds");
-
-      //   updateQueuedTasksState([...this.queduedTasks]);
-
-      //   // After 2 secs remove the task from queue
-      //   setTimeout(() => {
-      //     // Remove the task from its idx
-      //     const filteredQueuedTasks = this.queduedTasks.filter(
-      //       task_ => task_.getTaskId() !== task.getTaskId()
-      //     );
-      //     this.queduedTasks = [...filteredQueuedTasks];
-
-      //     // Update the state
-      //     updateQueuedTasksState([...this.queduedTasks]);
-      //   }, 2000);
-      // }, 3000);
     } catch (err: any) {
       // Update the task payload status to error
       const errorPayload: QueueTaskPayload = {

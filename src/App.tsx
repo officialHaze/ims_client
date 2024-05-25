@@ -77,7 +77,7 @@ function App() {
               <div className="absolute bottom-0 right-0 z-50">
                 {queuedTasks.map(task => (
                   <div className="p-4 bg-red-500 text-white m-4" key={task.getTaskId()}>
-                    {task.getTaskPayload().status}
+                    {task.getTaskPayload().errorPayload?.message}
                   </div>
                 ))}
               </div>
