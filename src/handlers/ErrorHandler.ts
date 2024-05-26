@@ -43,7 +43,7 @@ export default class ErrorHandler {
     }
   }
 
-  public handleError(err: any) {
+  public handleError(err: any, disableToast?: boolean) {
     console.error(err);
     const errMessage =
       err.response.data.error || "Something went wrong! Please try after sometime.";
@@ -68,6 +68,6 @@ export default class ErrorHandler {
       return;
     }
 
-    this.toastDisplayer(errMessage, this.responseStatusMap[errStatus]);
+    !disableToast && this.toastDisplayer(errMessage, this.responseStatusMap[errStatus]);
   }
 }

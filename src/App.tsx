@@ -16,6 +16,9 @@ import useModal from "./custom_hooks/useModal";
 import Modal from "./components/modals/Modal";
 import { Task } from "./handlers/TaskQueuer";
 import useQueueTask from "./custom_hooks/useQueueTask";
+import TaskErrorContainer from "./components/tasksRelated/TaskErrorContainer";
+import TaskInProgressContainer from "./components/tasksRelated/TaskInProgressContainer";
+import TaskCompleteContainer from "./components/tasksRelated/TaskCompleteContainer";
 
 const queryClient = new QueryClient();
 
@@ -74,10 +77,20 @@ function App() {
               {toDisplayModal && <Modal modalType={modalType} modalPayload={modalPayload} />}
 
               {/* Queue Task status */}
-              <div className="absolute bottom-0 right-0 z-50">
+              <div className="absolute bottom-0 right-0 z-10">
                 {queuedTasks.map(task => (
-                  <div className="p-4 bg-red-500 text-white m-4" key={task.getTaskId()}>
-                    {task.getTaskPayload().status}
+                  <div key={task.getTaskId()}>
+                    {task.getTaskPayload().status.toLowerCase().includes("progress") && (
+                      <TaskInProgressContainer task={task} />
+                    )}
+
+                    {task.getTaskPayload().status.toLowerCase().includes("error") && (
+                      <TaskErrorContainer task={task} />
+                    )}
+
+                    {task.getTaskPayload().status.toLowerCase().includes("success") && (
+                      <TaskCompleteContainer task={task} />
+                    )}
                   </div>
                 ))}
               </div>
