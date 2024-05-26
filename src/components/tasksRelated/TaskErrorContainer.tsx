@@ -31,7 +31,7 @@ export default function TaskErrorContainer({ task }: Props) {
   };
 
   return (
-    <div className="p-4 bg-red-500 text-white m-4 rounded-lg">
+    <div className="p-4 bg-red-500 text-white m-4 rounded-lg font-bold shadow-lg">
       <div className="flex justify-between items-center gap-4">
         <div>
           There was an error while uploading the file! Task Id:{" "}

@@ -12,7 +12,7 @@ export default function Dropbox({ file }: Props) {
       {!file ? (
         <>
           <h2 className="text-lg text-gray-500">Drag and drop a file or click to upload</h2>
-          <em className="text-sm text-gray-400">("Supported file types: xls, xlsx")</em>
+          <em className="text-sm text-gray-400">(Supported file types: xls, xlsx)</em>
         </>
       ) : (
         <p className="p-2">{file.name}</p>

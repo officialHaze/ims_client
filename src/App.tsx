@@ -18,6 +18,7 @@ import { Task } from "./handlers/TaskQueuer";
 import useQueueTask from "./custom_hooks/useQueueTask";
 import TaskErrorContainer from "./components/tasksRelated/TaskErrorContainer";
 import TaskInProgressContainer from "./components/tasksRelated/TaskInProgressContainer";
+import TaskCompleteContainer from "./components/tasksRelated/TaskCompleteContainer";
 
 const queryClient = new QueryClient();
 
@@ -82,8 +83,13 @@ function App() {
                     {task.getTaskPayload().status.toLowerCase().includes("progress") && (
                       <TaskInProgressContainer task={task} />
                     )}
+
                     {task.getTaskPayload().status.toLowerCase().includes("error") && (
                       <TaskErrorContainer task={task} />
+                    )}
+
+                    {task.getTaskPayload().status.toLowerCase().includes("success") && (
+                      <TaskCompleteContainer task={task} />
                     )}
                   </div>
                 ))}
