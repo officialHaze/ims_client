@@ -33,8 +33,10 @@ export default function TaskErrorContainer({ task }: Props) {
   return (
     <div className="p-4 bg-red-500 text-white m-4 rounded-lg">
       <div className="flex justify-between items-center gap-4">
-        There was an error while uploading the file! Task Id:{" "}
-        <span className="font-bold">{task.getTaskId().split("-")[0]}</span>
+        <div>
+          There was an error while uploading the file! Task Id:{" "}
+          <span className="font-bold">{task.getTaskId().split("-")[0]}</span>
+        </div>
         <MdClose onClick={handleClosingErrTaskContainer} className="cursor-pointer" />
       </div>
       <div

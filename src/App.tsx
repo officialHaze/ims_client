@@ -17,6 +17,7 @@ import Modal from "./components/modals/Modal";
 import { Task } from "./handlers/TaskQueuer";
 import useQueueTask from "./custom_hooks/useQueueTask";
 import TaskErrorContainer from "./components/tasksRelated/TaskErrorContainer";
+import TaskInProgressContainer from "./components/tasksRelated/TaskInProgressContainer";
 
 const queryClient = new QueryClient();
 
@@ -78,7 +79,10 @@ function App() {
               <div className="absolute bottom-0 right-0 z-10">
                 {queuedTasks.map(task => (
                   <div key={task.getTaskId()}>
-                    {task.getTaskPayload().status.includes("error") && (
+                    {task.getTaskPayload().status.toLowerCase().includes("progress") && (
+                      <TaskInProgressContainer task={task} />
+                    )}
+                    {task.getTaskPayload().status.toLowerCase().includes("error") && (
                       <TaskErrorContainer task={task} />
                     )}
                   </div>
