@@ -28,8 +28,8 @@ export default class ProductListingHelper {
       const { data } = await axiosInstance.post("/auth/upload-listing-template/product", formData);
       console.log({ response_after_listing_products: data });
     } catch (err: any) {
-      this.errorHandler.handleError(err);
-      throw new Error(err.response.data.error ?? null);
+      this.errorHandler.handleError(err, true); // Handle the error for any token expiry only and disable displaying any toast message
+      throw err.response.data.error ?? "Error encountered while uplaoding the file!";
     }
   }
 }

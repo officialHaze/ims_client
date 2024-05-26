@@ -60,6 +60,7 @@ const serializeRows = (data: ProductListQueryData[], { ...options }: RowSerializ
         <td>
           <div className="flex items-center justify-center gap-6 text-xl">
             <MdEdit
+              id="product-edit-modal"
               className="cursor-pointer"
               onClick={() =>
                 options.handleProductEdit(
@@ -72,6 +73,7 @@ const serializeRows = (data: ProductListQueryData[], { ...options }: RowSerializ
               }
             />
             <MdDelete
+              id="product-del-modal"
               className="cursor-pointer text-red-500"
               onClick={() => options.handleProductDelete(item.id)}
             />

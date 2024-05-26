@@ -36,7 +36,7 @@ export default function AddProductModal({ productQuery }: Props) {
   };
 
   return (
-    <div className="rounded-xl overflow-hidden w-1/2 shadow-xl">
+    <div id="add-product-modal" className="rounded-xl overflow-hidden w-1/2 shadow-xl">
       <section className="header bg-red-500 text-left py-3 px-4 text-xl font-bold text-white flex items-center justify-between">
         Add product
         <span>

@@ -76,7 +76,7 @@ export default class TaskQueuer {
         ...task.getTaskPayload(),
         status: "error",
         errorPayload: {
-          message: err.message || "Something went wrong while completing this task",
+          message: err || "Something went wrong while completing this task",
         },
       };
       task.setPayload(errorPayload);
