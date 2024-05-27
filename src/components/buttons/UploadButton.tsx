@@ -8,7 +8,7 @@ export default function UploadButton({ onClick: handleClick }: Props) {
       onClick={handleClick}
       className={`py-2 px-6 bg-yellow-500 hover:opacity-80 text-white text-lg rounded-lg`}
     >
-      Upload
+      Continue
     </button>
   );
 }
